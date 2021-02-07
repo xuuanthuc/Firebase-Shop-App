@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auths.dart';
 import 'package:shop_app/providers/carts.dart';
 import 'package:shop_app/providers/orders.dart';
 import 'package:shop_app/screens/edit_products_screen/edit_products_screen.dart';
+import 'package:shop_app/screens/login_screen/login_screen.dart';
 
 import 'providers/products.dart';
 import 'screens/cart_screen/cart_screen.dart';
@@ -21,6 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(value: Auth()),
         ChangeNotifierProvider(create: (ctx) => Products()),
         ChangeNotifierProvider(create: (ctx) => Cart()),
         ChangeNotifierProvider(create: (ctx) => Order()),
@@ -34,7 +37,7 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.black, //mau nhan
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: ProductOverviewScreen(),
+        home: AuthScreen(),
         routes: {
           //Đăng ký các tuyến đường để truyền dữ liệu
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
@@ -42,6 +45,7 @@ class MyApp extends StatelessWidget {
           OrderScreen.routeName: (ctx) => OrderScreen(),
           UserProductScreen.routeName: (ctx) => UserProductScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(),
+          AuthScreen.routeName: (ctx) => AuthScreen(),
         },
       ),
     );
