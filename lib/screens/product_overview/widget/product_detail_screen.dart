@@ -11,6 +11,7 @@ class ProductDetailScreen extends StatelessWidget {
       '/product-detail'; //Đặt tên tuyến đường để truyền dữ liệu vào đây
   @override
   Widget build(BuildContext context) {
+     final cart = Provider.of<Cart>(context, listen: false);
     final productId = ModalRoute.of(context).settings.arguments
         as String; //Ben kia gui id, ben nay nhan id theo kieu String
     final loadedProduct = Provider.of<Products>(context, listen: false).findById(productId); //truy cao vao san pham cos id trung voi id cu the
@@ -23,6 +24,25 @@ class ProductDetailScreen extends StatelessWidget {
           Container(
             width: double.infinity,
               child: Image.network(loadedProduct.imageUrl)),
+          IconButton(
+            icon: Icon(
+              Icons.shopping_cart,
+            ),
+            onPressed: () {
+              cart.addItem(productId, loadedProduct.title, loadedProduct.price);
+              Scaffold.of(context).hideCurrentSnackBar();
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text('Added item to cart!! '),
+                duration: Duration(seconds: 2),
+                action: SnackBarAction(
+                  onPressed: () => cart.removeSinglerCart(productId),
+                  label: 'UNDO',
+                  textColor: Colors.white,
+                ),
+              ));
+            },
+            color: Colors.white,
+          ),
         ],
       ),
     );
