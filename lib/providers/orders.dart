@@ -19,6 +19,9 @@ class OrderItem {
 }
 
 class Order with ChangeNotifier {
+  final String authToken;
+  final String userID;
+  Order(this.authToken, this.userID, this._orders);
   List<OrderItem> _orders = [];
 
   List<OrderItem> get orders {
@@ -32,7 +35,7 @@ class Order with ChangeNotifier {
 
   void addOrder(List<CartItem> cartProduct, double total) async {
     final url =
-        'https://shop-app-50b42-default-rtdb.firebaseio.com/orders.json';
+        'https://shop-app-50b42-default-rtdb.firebaseio.com/orders/$userID.json?auth=$authToken';
     final response = await http.post(url,
         body: json.encode({
           'amount': total,
@@ -59,8 +62,8 @@ class Order with ChangeNotifier {
   }
 
   Future<void> fetchAndSetOrder() async {
-    const url =
-        'https://shop-app-50b42-default-rtdb.firebaseio.com/orders.json';
+    final url =
+        'https://shop-app-50b42-default-rtdb.firebaseio.com/orders/$userID.json?auth=$authToken';
     try {
       final response =
           await http.get(url); //post de gui yeu cau gui, get de yeu cau nhan

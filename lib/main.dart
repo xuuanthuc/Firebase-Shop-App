@@ -6,6 +6,7 @@ import 'package:shop_app/providers/orders.dart';
 import 'package:shop_app/screens/edit_products_screen/edit_products_screen.dart';
 import 'package:shop_app/screens/login_screen/login_screen.dart';
 import 'package:shop_app/screens/product_overview/product_overview_screen.dart';
+import 'package:shop_app/widgets/sflash_screen.dart';
 
 import 'providers/products.dart';
 import 'screens/cart_screen/cart_screen.dart';
@@ -24,9 +25,17 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: Auth()),
-        ChangeNotifierProvider(create: (ctx) => Products()),
+        // ignore: missing_required_param
+        ChangeNotifierProxyProvider<Auth, Products>(
+            update: (ctx, auth, previousProviders) => Products(auth.token,auth.userId,
+                previousProviders == null ? [] : previousProviders.items)),
         ChangeNotifierProvider(create: (ctx) => Cart()),
-        ChangeNotifierProvider(create: (ctx) => Order()),
+        ChangeNotifierProxyProvider<Auth, Order>(
+          update: (ctx, auth, previoursOrders) => Order(
+            auth.token,auth.userId,
+            previoursOrders == null ? [] : previoursOrders.orders,
+          ),
+        ),
       ],
       //product thay doi con material khong lien quan
       child: Consumer<Auth>(
@@ -38,7 +47,9 @@ class MyApp extends StatelessWidget {
             accentColor: Colors.black, //mau nhan
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: auth.isAuth ? ProductOverviewScreen() : AuthScreen(),
+          home: auth.isAuth ? ProductOverviewScreen() : FutureBuilder(
+            future: auth.tryAutoLogin(),
+            builder: (ctx, snapshotAuth)=> snapshotAuth.connectionState == ConnectionState.waiting ? SplashScreen() : AuthScreen(),),
           routes: {
             //Đăng ký các tuyến đường để truyền dữ liệu
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),

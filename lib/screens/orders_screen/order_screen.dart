@@ -12,17 +12,23 @@ class OrderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final order = Provider.of<Order>(context);
+    // final order = Provider.of<Order>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Order'),
       ),
       drawer: AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () => _refeshOrder(context),
-        child: ListView.builder(
-          itemBuilder: (ctx, i) => OrderItem(order.orders[i]),
-          itemCount: order.orders.length,
+      body: FutureBuilder(//lay ket qua tu _refeshOrder truoc roi xay dung len list order
+        future: _refeshOrder(context),
+        builder:(ctx, snapshot)=> snapshot.connectionState == ConnectionState.waiting ? Center(child: CircularProgressIndicator(),) :
+        Consumer<Order>( // chi lay provider trong widget nay va build lai widget nay tranh build lai ca trang, neu dung final order o tren se build lai ca trang lien tuc, tuong tu voi user_products_screen
+          builder:(ctx, order, _) => RefreshIndicator(
+            onRefresh: () => _refeshOrder(context),
+            child: ListView.builder(
+              itemBuilder: (ctx, i) => OrderItem(order.orders[i]),
+              itemCount: order.orders.length,
+            ),
+          ),
         ),
       ),
     );

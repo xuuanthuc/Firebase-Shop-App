@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,6 +21,10 @@ class Auth with ChangeNotifier {
     }
     return null;
   }
+  String get userId{
+    return _userID;
+  }
+
 
   Future<void> _authentication(
       String email, String password, String urlAuth) async {
@@ -48,17 +52,50 @@ class Auth with ChangeNotifier {
           seconds: int.parse(responseData['expiresIn']),
         ),
       );
+
       notifyListeners();
+      print('lay du lieu');
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode({'token': _token, 'userId': _userID, 'expiryDate':_expiryDate.toIso8601String()});
+      prefs.setString('userData', userData);
+      print(userData);
     } catch (error) {
       throw error;
     }
   }
+  Future<bool> tryAutoLogin() async {
+    print('try auto login');
+    final preps = await SharedPreferences.getInstance();
+    if(!preps.containsKey('userData')){
+      print('false');
+      return false;
 
+    }
+    final _extracedUserData = jsonDecode(preps.getString('userData')) as Map<String, Object>;
+    // print(_extracedUserData);
+    _token = _extracedUserData['token'];
+    _userID = _extracedUserData['userId'];
+    _expiryDate = DateTime.parse(_extracedUserData['expiryDate']);
+    print(_token);
+    print(_userID);
+    notifyListeners();
+
+    return true;
+  }
   Future<void> signup(String email, String password) async {
     return _authentication(email, password, 'signUp');
   }
 
   Future<void> login(String email, String password) async {
     return _authentication(email, password, 'signInWithPassword');
+  }
+
+  void loggout() async {
+    _userID = null;
+    _token = null;
+    _expiryDate = null;
+    notifyListeners();
+    final preps = await SharedPreferences.getInstance();
+    preps.clear();
   }
 }

@@ -11,12 +11,13 @@ class UserProductScreen extends StatelessWidget {
   static const routeName = '/user-product-screen';
   
   Future<void> _refeshProduct(BuildContext context) async{
-    await Provider.of<Products>(context, listen: false).fetchAndSetProduct();
+    await Provider.of<Products>(context, listen: false).fetchAndSetProduct(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final products = Provider.of<Products>(context);
+    // final products = Provider.of<Products>(context);
+    print('refesh');
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Products'),
@@ -28,22 +29,29 @@ class UserProductScreen extends StatelessWidget {
         ],
       ),
       drawer: AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () => _refeshProduct(context),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: ListView.builder(
-            itemBuilder: (ctx, i) => Column(
-              children: [
-                UserProduct(
-                  products.items[i].id,
-                  products.items[i].title,
-                  products.items[i].imageUrl,
+      body: FutureBuilder(
+        future: _refeshProduct(context),
+        builder:(ctx, snapshot) => snapshot.connectionState == ConnectionState.waiting ? Center(child: CircularProgressIndicator()) : RefreshIndicator(
+          onRefresh: () => _refeshProduct(context),
+          child:
+          Consumer<Products>(
+            builder:(ctx, products, _) =>
+                Padding(
+              padding: EdgeInsets.all(8),
+              child: ListView.builder(
+                itemBuilder: (ctx, i) => Column(
+                  children: [
+                    UserProduct(
+                      products.items[i].id,
+                      products.items[i].title,
+                      products.items[i].imageUrl,
+                    ),
+                    Divider()
+                  ],
                 ),
-                Divider()
-              ],
+                itemCount: products.items.length,
+              ),
             ),
-            itemCount: products.items.length,
           ),
         ),
       ),
