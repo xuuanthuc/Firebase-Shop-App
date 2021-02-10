@@ -19,9 +19,11 @@ class _OrderItemState extends State<OrderItem> {
   var _expandedMore = false;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 900),
+      height: _expandedMore ? min(widget.order.products.length * 20.0 + 30, 180) : 95,
       child: Card(
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           children: [
             ListTile(
@@ -38,9 +40,10 @@ class _OrderItemState extends State<OrderItem> {
                 },
               ),
             ),
-            if (_expandedMore)
-              Container(
-                height: min(widget.order.products.length * 20.0 + 30, 180),
+
+              AnimatedContainer(
+                duration: Duration(milliseconds: 900),
+                height: _expandedMore ?  min(widget.order.products.length * 20.0 + 30, 180): 0,
                 child: ListView(
                   children: widget.order.products.map((prod) => Padding(
                     padding: const EdgeInsets.all(15.0),
@@ -54,7 +57,6 @@ class _OrderItemState extends State<OrderItem> {
                   )).toList(),
                 ),
               ),
-
           ],
         ),
       ),

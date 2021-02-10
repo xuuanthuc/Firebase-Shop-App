@@ -6,7 +6,6 @@ import 'package:shop_app/providers/carts.dart';
 
 import 'product_detail_screen.dart';
 
-
 class ProductItem extends StatelessWidget {
   final String id;
   final String title;
@@ -29,9 +28,13 @@ class ProductItem extends StatelessWidget {
               arguments: id,
             );
           },
-          child: Image.network(
-            imageUrl,
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: id,
+            child: FadeInImage(
+              placeholder: AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(imageUrl),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         footer: GridTileBar(
