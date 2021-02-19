@@ -20,8 +20,8 @@ class _OrderItemState extends State<OrderItem> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 900),
-      height: _expandedMore ? min(widget.order.products.length * 20.0 + 30, 180) : 95,
+      duration: Duration(milliseconds: 300),
+      height: _expandedMore ? min(widget.order.products.length * 20.0 + 130, 200) : 100,
       child: Card(
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
@@ -42,8 +42,8 @@ class _OrderItemState extends State<OrderItem> {
             ),
 
               AnimatedContainer(
-                duration: Duration(milliseconds: 900),
-                height: _expandedMore ?  min(widget.order.products.length * 20.0 + 30, 180): 0,
+                duration: Duration(milliseconds: 300),
+                height: _expandedMore ? min(widget.order.products.length * 20.0 + 10, 100): 0,
                 child: ListView(
                   children: widget.order.products.map((prod) => Padding(
                     padding: const EdgeInsets.all(15.0),
